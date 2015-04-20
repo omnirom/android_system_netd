@@ -29,6 +29,7 @@ public:
             int numservers);
     int clearDnsServers(unsigned netid);
     int flushDnsCache(unsigned netid);
+    int setDnsExcludedPorts(in_port_t min, in_port_t max);
     // TODO: Add deleteDnsCache(unsigned netId)
 };
 
