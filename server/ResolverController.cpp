@@ -55,3 +55,11 @@ int ResolverController::flushDnsCache(unsigned netId) {
 
     return 0;
 }
+
+int ResolverController::setDnsExcludedPorts(in_port_t min, in_port_t max) {
+    if (DBG) {
+        ALOGD("excludednsportrange min = %u max = %u\n", min, max);
+    }
+
+    return _resolv_set_port_exclusion_range(min, max);
+}
