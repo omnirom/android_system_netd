@@ -19,9 +19,7 @@ include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := \
         $(call include-path-for, libhardware_legacy)/hardware_legacy \
         bionic/libc/dns/include \
-        external/libcxx/include \
         external/mdnsresponder/mDNSShared \
-        external/openssl/include \
         system/netd/include \
 
 LOCAL_CLANG := true
@@ -37,7 +35,13 @@ LOCAL_SHARED_LIBRARIES := \
         liblogwrap \
         libmdnssd \
         libnetutils \
+        libnl \
         libsysutils \
+        libbase \
+        libutils \
+
+LOCAL_STATIC_LIBRARIES := \
+        libpcap \
 
 LOCAL_SRC_FILES := \
         BandwidthController.cpp \
@@ -63,6 +67,7 @@ LOCAL_SRC_FILES := \
         ResolverController.cpp \
         RouteController.cpp \
         SoftapController.cpp \
+        StrictController.cpp \
         TetherController.cpp \
         UidRanges.cpp \
         VirtualNetwork.cpp \

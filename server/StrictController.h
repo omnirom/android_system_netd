@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-#include "DummyNetwork.h"
+#ifndef _STRICT_CONTROLLER_H
+#define _STRICT_CONTROLLER_H
 
-#include "RouteController.h"
+#include <string>
 
-#define LOG_TAG "Netd"
-#include "log/log.h"
-#include "errno.h"
+enum StrictPenalty { INVALID, ACCEPT, LOG, REJECT };
 
-const char* DummyNetwork::INTERFACE_NAME = "dummy0";
+/*
+ * Help apps catch unwanted low-level networking behavior, like
+ * connections not wrapped in TLS.
+ */
+class StrictController {
+public:
+    StrictController();
 
-DummyNetwork::DummyNetwork(unsigned netId) : Network(netId) {
-    mInterfaces.insert(INTERFACE_NAME);
-}
+    int enableStrict(void);
+    int disableStrict(void);
 
-DummyNetwork::~DummyNetwork() {
-}
+    int setUidCleartextPenalty(uid_t, StrictPenalty);
 
-Network::Type DummyNetwork::getType() const {
-    return DUMMY;
-}
+    static const char* LOCAL_OUTPUT;
+    static const char* LOCAL_CLEAR_DETECT;
+    static const char* LOCAL_CLEAR_CAUGHT;
+    static const char* LOCAL_PENALTY_LOG;
+    static const char* LOCAL_PENALTY_REJECT;
+};
 
-int DummyNetwork::addInterface(const std::string& /* interface */) {
-    return -EINVAL;
-}
-
-int DummyNetwork::removeInterface(const std::string& /* interface */) {
-    return -EINVAL;
-}
+#endif

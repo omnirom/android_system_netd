@@ -68,7 +68,6 @@ bool inBpToolsMode() {
 
 }  // namespace
 
-
 TetherController::TetherController() {
     mInterfaces = new InterfaceCollection();
     mDnsNetId = 0;
@@ -178,6 +177,8 @@ int TetherController::startTethering(int num_addrs, struct in_addr* addrs) {
             char *start = strdup(inet_ntoa(addrs[addrIndex++]));
             char *end = strdup(inet_ntoa(addrs[addrIndex++]));
             asprintf(&(args[nextArg++]),"--dhcp-range=%s,%s,1h", start, end);
+            free(start);
+            free(end);
         }
 
         if (execv(args[0], args)) {
