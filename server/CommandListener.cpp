@@ -853,16 +853,6 @@ int CommandListener::ResolverCmd::runCommand(SocketClient *cli, int argc, char *
                     "Wrong number of arguments to resolver flushnet", false);
             return 0;
         }
-    } else if (!strcmp(argv[1], "excludednsportrange")) {
-        // "resolver excludednsportrange <min_port> <max port>"
-        if (argc == 4) {
-            rc = sResolverCtrl->setDnsExcludedPorts(strtoul(argv[2], NULL, 0),
-                    strtoul(argv[3], NULL, 0));
-        } else {
-            cli->sendMsg(ResponseCode::CommandSyntaxError,
-                    "Wrong number of arguments to resolver excludednsportrange", false);
-            return 0;
-        }
     } else {
         cli->sendMsg(ResponseCode::CommandSyntaxError,"Resolver unknown command", false);
         return 0;
