@@ -62,6 +62,10 @@ endif
 
 LOCAL_INIT_RC := netd.rc
 
+ifeq ($(TARGET_KERNEL_NO_FRA_UID_RANGE_SUPPORT),true)
+LOCAL_CPPFLAGS += -DCONFIG_NO_FRA_UID_RANGE_SUPPORT
+endif
+
 LOCAL_SHARED_LIBRARIES := \
         libbinder \
         libcutils \

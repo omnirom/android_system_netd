@@ -81,6 +81,10 @@ const char* const ROUTE_TABLE_NAME_LEGACY_SYSTEM  = "legacy_system";
 const char* const ROUTE_TABLE_NAME_LOCAL = "local";
 const char* const ROUTE_TABLE_NAME_MAIN  = "main";
 
+#ifdef CONFIG_NO_FRA_UID_RANGE_SUPPORT
+const uint16_t FRA_UID_START = 18;
+const uint16_t FRA_UID_END   = 19;
+#else
 // These values are upstream, but not yet in our headers.
 // TODO: delete these definitions when updating the headers.
 const uint16_t FRA_UID_RANGE = 20;
@@ -88,6 +92,7 @@ struct fib_rule_uid_range {
         __u32           start;
         __u32           end;
 };
+#endif
 
 const uint8_t AF_FAMILIES[] = {AF_INET, AF_INET6};
 
@@ -114,7 +119,12 @@ rtattr FRATTR_PRIORITY  = { U16_RTA_LENGTH(sizeof(uint32_t)),           FRA_PRIO
 rtattr FRATTR_TABLE     = { U16_RTA_LENGTH(sizeof(uint32_t)),           FRA_TABLE };
 rtattr FRATTR_FWMARK    = { U16_RTA_LENGTH(sizeof(uint32_t)),           FRA_FWMARK };
 rtattr FRATTR_FWMASK    = { U16_RTA_LENGTH(sizeof(uint32_t)),           FRA_FWMASK };
+#ifdef CONFIG_NO_FRA_UID_RANGE_SUPPORT
+rtattr FRATTR_UID_START = { U16_RTA_LENGTH(sizeof(uid_t)),    FRA_UID_START };
+rtattr FRATTR_UID_END   = { U16_RTA_LENGTH(sizeof(uid_t)),    FRA_UID_END };
+#else
 rtattr FRATTR_UID_RANGE = { U16_RTA_LENGTH(sizeof(fib_rule_uid_range)), FRA_UID_RANGE };
+#endif
 
 rtattr RTATTR_TABLE     = { U16_RTA_LENGTH(sizeof(uint32_t)),           RTA_TABLE };
 rtattr RTATTR_OIF       = { U16_RTA_LENGTH(sizeof(uint32_t)),           RTA_OIF };
@@ -260,8 +270,9 @@ WARN_UNUSED_RESULT int modifyIpRule(uint16_t action, uint32_t priority, uint8_t 
 
     rtattr fraIifName = { U16_RTA_LENGTH(iifLength), FRA_IIFNAME };
     rtattr fraOifName = { U16_RTA_LENGTH(oifLength), FRA_OIFNAME };
+#ifndef CONFIG_NO_FRA_UID_RANGE_SUPPORT
     struct fib_rule_uid_range uidRange = { uidStart, uidEnd };
-
+#endif
     iovec iov[] = {
         { NULL,              0 },
         { &rule,             sizeof(rule) },
@@ -273,8 +284,15 @@ WARN_UNUSED_RESULT int modifyIpRule(uint16_t action, uint32_t priority, uint8_t 
         { &fwmark,           mask ? sizeof(fwmark) : 0 },
         { &FRATTR_FWMASK,    mask ? sizeof(FRATTR_FWMASK) : 0 },
         { &mask,             mask ? sizeof(mask) : 0 },
+#ifdef CONFIG_NO_FRA_UID_RANGE_SUPPORT
+        { &FRATTR_UID_START, isUidRule ? sizeof(FRATTR_UID_START) : 0 },
+        { &uidStart,         isUidRule ? sizeof(uidStart) : 0 },
+        { &FRATTR_UID_END,   isUidRule ? sizeof(FRATTR_UID_END) : 0 },
+        { &uidEnd,           isUidRule ? sizeof(uidEnd) : 0 },
+#else
         { &FRATTR_UID_RANGE, isUidRule ? sizeof(FRATTR_UID_RANGE) : 0 },
         { &uidRange,         isUidRule ? sizeof(uidRange) : 0 },
+#endif
         { &fraIifName,       iif != IIF_NONE ? sizeof(fraIifName) : 0 },
         { iifName,           iifLength },
         { PADDING_BUFFER,    iifPadding },
