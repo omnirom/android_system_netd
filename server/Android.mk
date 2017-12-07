@@ -67,12 +67,9 @@ LOCAL_CPPFLAGS += -DCONFIG_NO_FRA_UID_RANGE_SUPPORT
 endif
 
 LOCAL_SHARED_LIBRARIES := \
-        android.system.net.netd@1.0 \
         libbinder \
         libcutils \
         libdl \
-        libhidlbase \
-        libhidltransport \
         liblog \
         liblogwrap \
         libmdnssd \
@@ -103,7 +100,6 @@ LOCAL_SRC_FILES := \
         NatController.cpp \
         NetdCommand.cpp \
         NetdConstants.cpp \
-        NetdHwService.cpp \
         NetdNativeService.cpp \
         NetlinkHandler.cpp \
         NetlinkManager.cpp \
